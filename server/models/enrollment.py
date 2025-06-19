@@ -1,9 +1,10 @@
-from server.models.db import db
+from .db import db
 from sqlalchemy import  ForeignKey
+from sqlalchemy_serializer import SerializerMixin
 
 
 
-class Enrollment(db.Model):
+class Enrollment(db.Model,SerializerMixin):
     __tablename__ = "enrollments"
 
     id = db.Column(db.Integer(), primary_key=True)
@@ -12,4 +13,4 @@ class Enrollment(db.Model):
 
     student = db.relationship("Student", back_populates="enrollments")
     course = db.relationship("Course", back_populates="enrollments")
- 
+    serialize_rules = ('-student.enrollments','course.enrollments')

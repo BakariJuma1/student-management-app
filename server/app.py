@@ -2,7 +2,9 @@ from flask import Flask,request
 from flask_migrate import Migrate
 from flask_restful import Api, Resource  
 from dotenv import load_dotenv
-from server.models.db import db
+from models import db,Student,Course,Enrollment,Gender
+from controllers import controller
+
 
 load_dotenv()
 
@@ -13,14 +15,32 @@ app.config.from_prefixed_env()
 db.init_app(app)
 migrate = Migrate(app, db)
 
-# register api routes
-from server.routes.students_route import api as students_api
-from server.routes.courses_route import api as courses_api
-from server.routes.enrollments_route import api as enrollments_api
+@app.route('/')
+def home():
+    return 'Home'
 
-students_api.init_app(app)
-courses_api.init_app(app)
-enrollments_api.init_app(app)
+crud_routes = [
+    {
+        "name":"students",
+        "model":Student
+     },
+     {
+        "name":"courses",
+        "model":Course
+     },
+     {
+        "name":"enrollments",
+        "model":Enrollment
+     },
+     {
+        "name":"genders",
+        "model":Gender
+     }
+]
+for route in crud_routes:
+    students_bp = controller(**route)
+    app.register_blueprint(students_bp,url_prefix=f'/{route["name"]}')
+
 
 if __name__ == '__main__':
     app.run()

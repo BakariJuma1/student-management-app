@@ -1,7 +1,7 @@
-from server.models.db import db
-# from sqlalchemy.orm import relationship
+from .db import db
+from sqlalchemy_serializer import SerializerMixin
 
-class Student(db.Model):
+class Student(db.Model,SerializerMixin):
     
     __tablename__ = "students"
     id = db.Column(db.Integer(), primary_key=True)
@@ -12,4 +12,6 @@ class Student(db.Model):
         "Enrollment", 
         back_populates="student" ,
         cascade='all')
+    
+    serialize_rules = ("-enrollments.student",)
     
